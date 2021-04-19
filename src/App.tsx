@@ -126,7 +126,10 @@ const App: React.FC = () => {
       {options.filter && (
         <>
           <label htmlFor="filter-value">{options.filter?.key}</label>
-          <select id="filter-value" onChange={handleFilterValueSelect}>
+          <select
+            id="filter-value"
+            onChange={handleFilterValueSelect}
+            value={options.filter!.value as string}>
             {filter[options.filter!.key].map((val, i) => (
               <option key={i} value={String(val)}>
                 {String(val)}
