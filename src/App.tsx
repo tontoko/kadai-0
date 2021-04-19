@@ -1,8 +1,12 @@
-import React, { useCallback, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { datalist, listOptions, processedDataList } from './recoil';
 import { IAppData, allowedFilterKeys, allowedSortKeys } from './types';
+
+mapboxgl.accessToken =
+  'pk.eyJ1IjoiaGlyYWtpdG9tb2hpa28iLCJhIjoiY2tub3B0Z2YwMTV2cjJ2cWo5dHRxaHc4aCJ9.OcjMnlzSKYanpJ7ZBv-S2A';
 
 const filter: { [key: string]: IAppData[allowedFilterKeys][] } = {
   country: ['Japan', 'Germany', 'Austria'],
@@ -15,6 +19,27 @@ const App: React.FC = () => {
   const setDataList = useSetRecoilState(datalist);
   const dataList = useRecoilValue(processedDataList);
   const [options, setOptions] = useRecoilState(listOptions);
+
+  const mapContainer = useRef() as React.MutableRefObject<HTMLObjectElement>;
+  const [lng, setLng] = useState(-70.9);
+  const [lat, setLat] = useState(42.35);
+  const [zoom, setZoom] = useState(9);
+
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [lng, lat],
+      zoom: zoom,
+    });
+    map.on('move', () => {
+      setLng(Number(map.getCenter().lng.toFixed(4)));
+      setLat(Number(map.getCenter().lat.toFixed(4)));
+      setZoom(Number(map.getZoom().toFixed(2)));
+    });
+    return () => map.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFilterKeySelect = useCallback(
     (e) => {
@@ -148,6 +173,11 @@ const App: React.FC = () => {
       </select>
       <label htmlFor="sort-desc">desc</label>
       <input type="checkbox" id="sort-desc" onChange={handleDescCheck} />
+      <div
+        className="map-container"
+        ref={mapContainer}
+        style={{ height: 500, width: 500 }}
+      />
     </Container>
   );
 };
