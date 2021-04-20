@@ -5,7 +5,9 @@ import { IAppData, IAppOptions, allowedFilterKeys } from './types';
 export const datalist = atom<IAppData[]>({
   key: 'datalist/default',
   default: appData.map((data, i) =>
-    i === 0 ? { ...data, selected: true } : { ...data, selected: false }
+    i === 0
+      ? { ...data, location: [...data.location], selected: true }
+      : { ...data, location: [...data.location], selected: false }
   ),
 });
 

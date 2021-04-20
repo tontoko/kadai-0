@@ -6,6 +6,7 @@ export type IAppData = {
   study: boolean;
   start: DateTime;
   end: DateTime;
+  location: [number, number];
   selected: boolean;
 };
 

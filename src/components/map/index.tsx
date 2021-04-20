@@ -1,30 +1,52 @@
-import mapboxgl from 'mapbox-gl';
+import mapboxgl, { Map } from 'mapbox-gl';
 import React from 'react';
 import { useRef, useState, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+import { datalist, processedDataList } from '../../recoil';
 mapboxgl.accessToken =
   'pk.eyJ1IjoiaGlyYWtpdG9tb2hpa28iLCJhIjoiY2tub3B0Z2YwMTV2cjJ2cWo5dHRxaHc4aCJ9.OcjMnlzSKYanpJ7ZBv-S2A';
 
 const MapContainer: React.FC = () => {
+  const processedList = useRecoilValue(processedDataList);
+  const defaultList = useRecoilValue(datalist);
   const mapContainer = useRef() as React.MutableRefObject<HTMLObjectElement>;
-  const [lng, setLng] = useState(-70.9);
-  const [lat, setLat] = useState(42.35);
-  const [zoom, setZoom] = useState(9);
+  const map = useRef<Map>();
+  const [lng, setLng] = useState(0);
+  const [lat, setLat] = useState(0);
+  const [zoom, setZoom] = useState(0);
 
   useEffect(() => {
-    const map = new mapboxgl.Map({
+    map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [lng, lat],
       zoom: zoom,
     });
-    map.on('move', () => {
-      setLng(Number(map.getCenter().lng.toFixed(4)));
-      setLat(Number(map.getCenter().lat.toFixed(4)));
-      setZoom(Number(map.getZoom().toFixed(2)));
+    defaultList.map((data) => {
+      new mapboxgl.Marker()
+        .setLngLat(data.location)
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 }).setText(
+            `${data.name}(${data.country}) ${data.start.toFormat(
+              'yyyy/MM'
+            )}-${data.end.toFormat('yyyy/MM')}`
+          )
+        )
+        .addTo(map.current!);
     });
-    return () => map.remove();
+    map.current.on('move', () => {
+      setLng(Number(map.current?.getCenter().lng.toFixed(4) || 0));
+      setLat(Number(map.current?.getCenter().lat.toFixed(4) || 0));
+      setZoom(Number(map.current?.getZoom().toFixed(2) || 0));
+    });
+    return () => map.current?.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const selected = processedList.find((data) => data.selected);
+    selected && map.current?.flyTo({ center: selected.location, zoom: 9 });
+  }, [processedList]);
 
   return (
     <div

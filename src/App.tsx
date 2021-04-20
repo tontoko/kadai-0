@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import ButtonsContainer from './components/button';
 import ItemContainer from './components/item';
 import MapContainer from './components/map';
 import OptionsContainer from './components/options';
@@ -9,6 +10,7 @@ const App: React.FC = () => {
     <Container>
       <ItemContainer />
       <OptionsContainer />
+      <ButtonsContainer />
       <MapContainer />
     </Container>
   );
