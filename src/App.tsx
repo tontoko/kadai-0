@@ -18,7 +18,7 @@ const App: React.FC = () => {
 
 const Container = styled.div`
   display: flex;
-  margin-top: 40px;
+  margin-top: 20px;
   height: 100%;
   width: 80%;
   align-items: center;

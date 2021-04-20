@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 import { processedDataList, datalist } from '../../recoil';
 
 const ButtonsContainer: React.FC = () => {
@@ -45,11 +46,18 @@ const ButtonsContainer: React.FC = () => {
   }, [defaultList, processedList, setDefaultList]);
 
   return (
-    <div>
+    <ButtonsBox>
       <button onClick={beforeHandler}>before</button>
       <button onClick={nextHandler}>next</button>
-    </div>
+    </ButtonsBox>
   );
 };
+
+const ButtonsBox = styled.div`
+  margin: 10px;
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+`;
 
 export default ButtonsContainer;

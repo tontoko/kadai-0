@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
+import styled from 'styled-components';
 import { listOptions } from '../../recoil';
 import { allowedSortKeys } from '../../types';
 
@@ -46,19 +47,34 @@ const Sort: React.FC = () => {
     [setOptions]
   );
   return (
-    <>
-      <label htmlFor="sort-key">Sort</label>
-      <select id="sort-key" onChange={handleSortSelect}>
+    <SortBox>
+      <label htmlFor="sort-key" style={{ marginRight: 5 }}>
+        Sort
+      </label>
+      <select
+        id="sort-key"
+        onChange={handleSortSelect}
+        style={{ marginRight: 5 }}>
         {sort.map((val) => (
           <option key={val} value={val}>
             {val}
           </option>
         ))}
       </select>
-      <label htmlFor="sort-desc">desc</label>
+      <label htmlFor="sort-desc" style={{ marginRight: 5 }}>
+        desc
+      </label>
       <input type="checkbox" id="sort-desc" onChange={handleDescCheck} />
-    </>
+    </SortBox>
   );
 };
+
+const SortBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 10px;
+  margin-right: 10px;
+`;
 
 export default Sort;

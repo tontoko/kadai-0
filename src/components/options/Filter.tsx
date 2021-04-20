@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 import { listOptions } from '../../recoil';
 import { allowedFilterKeys, IAppData } from '../../types';
 
@@ -50,8 +51,10 @@ const Filter: React.FC = () => {
   );
 
   return (
-    <>
-      <label htmlFor="filter-key">Filter</label>
+    <FilterBox>
+      <label htmlFor="filter-key" style={{ marginRight: 5 }}>
+        Filter
+      </label>
       <select id="filter-key" onChange={handleFilterKeySelect}>
         <option key="none">none</option>
         {Object.keys(filter).map((val) => (
@@ -75,8 +78,16 @@ const Filter: React.FC = () => {
           </select>
         </>
       )}
-    </>
+    </FilterBox>
   );
 };
+
+const FilterBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 10px;
+  margin-right: 10px;
+`;
 
 export default Filter;
