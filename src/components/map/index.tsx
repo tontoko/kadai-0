@@ -1,4 +1,4 @@
-import mapboxgl, { Map } from 'mapbox-gl';
+import mapboxgl, { Map, Marker } from 'mapbox-gl';
 import React from 'react';
 import { useRef, useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -11,6 +11,7 @@ const MapContainer: React.FC = () => {
   const defaultList = useRecoilValue(datalist);
   const mapContainer = useRef() as React.MutableRefObject<HTMLObjectElement>;
   const map = useRef<Map>();
+  const makers = useRef<{ [key: string]: Marker }>({});
   const [lng, setLng] = useState(0);
   const [lat, setLat] = useState(0);
   const [zoom, setZoom] = useState(0);
@@ -23,7 +24,7 @@ const MapContainer: React.FC = () => {
       zoom: zoom,
     });
     defaultList.map((data) => {
-      new mapboxgl.Marker()
+      makers.current[data.name] = new mapboxgl.Marker()
         .setLngLat(data.location)
         .setPopup(
           new mapboxgl.Popup({ offset: 25 }).setText(
@@ -45,7 +46,15 @@ const MapContainer: React.FC = () => {
 
   useEffect(() => {
     const selected = processedList.find((data) => data.selected);
-    selected && map.current?.flyTo({ center: selected.location, zoom: 9 });
+    if (selected) {
+      Object.keys(makers.current).map(
+        (name) =>
+          makers.current[name].getPopup().isOpen() &&
+          makers.current[name].togglePopup()
+      );
+      makers.current[selected.name].togglePopup();
+      map.current?.flyTo({ center: selected.location, zoom: 9 });
+    }
   }, [processedList]);
 
   return (
